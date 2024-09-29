@@ -37,7 +37,7 @@ const Contributions = () => {
   });
 
   return (
-    <div>
+    <section>
       <h2>Filter by Activity</h2>
 
       {/* Buttons or dropdown to change the filter */}
@@ -47,7 +47,7 @@ const Contributions = () => {
 
       {/* Pass the data to the Heatmap component */}
       <Heatmap data={data || []} />
-    </div>
+    </section>
   );
 };
 

@@ -1,6 +1,6 @@
-import CalendarHeatmap from 'react-calendar-heatmap';
+import CalendarHeatmap from "react-calendar-heatmap";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-import 'react-calendar-heatmap/dist/styles.css';
+import "react-calendar-heatmap/dist/styles.css";
 
 const today = new Date();
 
@@ -14,16 +14,16 @@ const Heatmap = ({ data }) => {
         values={data}
         classForValue={(value) => {
           if (!value) {
-            return 'color-empty';
+            return "color-empty";
           }
           return `color-github-${value.count}`;
         }}
         tooltipDataAttrs={(value) => {
           if (!value || !value.date) {
-            return { 'data-tip': 'No contributions' };
+            return { "data-tip": "No contributions" };
           }
           return {
-            'data-tip': `${value.date}: ${value.count} contributions`,
+            "data-tip": `${value.date}: ${value.count} contributions`,
           };
         }}
         showWeekdayLabels={true}

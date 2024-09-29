@@ -4,7 +4,7 @@ function Tracker() {
   const data = [
     { id: 1, title: "run", completed: true },
     { id: 2, title: "walk", completed: true },
-    { id: 3, title: "swim", completed: false },
+    { id: 3, title: "fuck", completed: false },
   ];
   return (
     <section>
@@ -20,7 +20,7 @@ function Tracker() {
             <p className="title-task">{task?.title}</p>
           </div>
         ))}
-        <p>redding</p>
+
       </div>
     </section>
   );
