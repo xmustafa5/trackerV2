@@ -1,36 +1,42 @@
-import { useEffect, useState } from 'react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { useQuery } from '@tanstack/react-query';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { useState } from 'react';
 import { db } from './firebase'; // Firebase Firestore instance
 import Heatmap from './Heatmap';
 
 const App = () => {
-  const [data, setData] = useState([]);
   const [filter, setFilter] = useState('all'); // Activity filter
 
-  useEffect(() => {
-    const fetchData = async () => {
-      let q;
-      const contributionsRef = collection(db, 'contributions');
+  // Fetch data based on the filter
+  const fetchData = async () => {
+    const contributionsRef = collection(db, 'contributions');
+    let q;
 
-      if (filter === 'all') {
-        // No filter, fetch all data
-        q = query(contributionsRef);
-      } else {
-        // Apply filter (e.g., filter for 'run' or 'reading')
-        q = query(contributionsRef, where('activity', '==', filter));
-      }
+    // Apply query conditionally based on the filter
+    if (filter === 'all') {
+      q = query(contributionsRef); // Fetch all documents
+    } else {
+      q = query(contributionsRef, where('activity', '==', filter)); // Fetch filtered documents
+    }
 
-      const querySnapshot = await getDocs(q);
-      const filteredData = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
+    // Fetch the data from Firestore
+    const querySnapshot = await getDocs(q);
 
-      setData(filteredData);
-    };
+    // Map the data to a more usable format
+    const filteredData = querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }));
 
-    fetchData();
-  }, [filter]);
+    return filteredData;
+  };
+
+  const { data} = useQuery({
+    queryKey: ['contributions', filter], 
+    queryFn: fetchData, 
+  });
+
+  // Handle loading and error states
 
   return (
     <div>
@@ -41,8 +47,8 @@ const App = () => {
       <button onClick={() => setFilter('run')}>Running</button>
       <button onClick={() => setFilter('reading')}>Reading</button>
 
-      {/* Your CalendarHeatmap component using filtered data */}
-      <Heatmap data={data} />
+      {/* Pass the data to the Heatmap component */}
+      <Heatmap data={data || []} />
     </div>
   );
 };
