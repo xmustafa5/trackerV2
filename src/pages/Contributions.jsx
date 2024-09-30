@@ -27,7 +27,7 @@ const Contributions = () => {
       ...doc.data(),
       id: doc.id,
     }));
-console.log({filteredData})
+console.log(filteredData)
 function filterDate(data) {
   return data?.map((i) => {
     return {

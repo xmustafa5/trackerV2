@@ -1,16 +1,14 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import {
-  collection,
-  getDocs,
-  updateDoc,
-  doc,
-  addDoc,
-  query,
-  where,
-  getDoc,
-} from "firebase/firestore";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Checkbox from "../common/Checkbox";
 import { db } from "../firebase";
 
@@ -81,12 +79,28 @@ function Tracker() {
     queryFn: fetchAllTasksaaa,
   });
   // Update task completion status in Firestore
-  const updateTaskStatus = async ({ id, completed }) => {
+  const updateTaskStatus = async ({ id, date, completed }) => {
     const taskRef = doc(db, "allTasks", id);
     const taskSnapshot = await getDoc(taskRef);
     const prevDates = taskSnapshot.data().dates || [];
-    await updateDoc(taskRef, { dates:[...prevDates,{date:selectedDate.toISOString().split("T")[0], completed }]});
-  };
+
+    // Create a new array to hold the updated dates
+    const updatedDates = prevDates.map(dateEntry => {
+        // Check if the current dateEntry's date matches the provided date
+        if (dateEntry.date === date) {
+            // If it matches, update the completed status
+            return { ...dateEntry, completed };
+        }
+        // Otherwise, return the dateEntry as is
+        return dateEntry;
+    });
+
+    // Update the document with the modified dates array
+    await updateDoc(taskRef, { dates: updatedDates });
+};
+
+
+
 
   const mutation = useMutation({
     mutationFn: updateTaskStatus,
@@ -120,8 +134,9 @@ function Tracker() {
     queryClient.invalidateQueries({ queryKey: ["all-task-with-filter"] });
   };
 
-  const handleTaskClick = (task) => {
-    mutation.mutate({ id: task.id, completed: !task.completed });
+  const handleTaskClick = (id, date, completed) => {
+    console.log(completed)
+    mutation.mutate({ id: id, date:date, completed:!completed });
   };
 
   // Calendar functions
@@ -206,7 +221,7 @@ function Tracker() {
       queryClient.invalidateQueries({ queryKey: ["all-tasks"] });
     }
   }, [allTasks, currentDate]);
-
+ 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error fetching tasks...</div>;
   return (
@@ -275,10 +290,14 @@ function Tracker() {
             className={`task ${task.completed ? "active-task" : ""}`}
             key={task.id}
           >
-            <Checkbox
-              completed={task.completed}
-              onClick={() => handleTaskClick(task)}
-            />
+             {task?.dates?.map((item,index)=>(
+item?.date === selectedDate.toISOString().split("T")[0] &&
+              <Checkbox
+              key={index}
+              completed={item.completed}
+              onClick={() => handleTaskClick(task?.id,item?.date,item?.completed)}
+              />
+            ))}
             <p className="title-task">{task.task}</p>
           </div>
         ))}
