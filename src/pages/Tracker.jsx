@@ -8,6 +8,7 @@ import {
   addDoc,
   query,
   where,
+  getDoc,
 } from "firebase/firestore";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Checkbox from "../common/Checkbox";
@@ -32,16 +33,26 @@ function Tracker() {
   // Fetch task data from Firestore based on the selected date
   const fetchAllTasks = async (date) => {
     const tasksRef = collection(db, "allTasks");
-    const q = date
-      ? query(tasksRef, where("dates", "array-contains", date))
-      : tasksRef; // No date filter if no date is selected
-
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
+  
+    // Fetch all tasks
+    const querySnapshot = await getDocs(tasksRef);
+    
+    // Filter tasks based on whether the date exists in the array of objects
+    const tasks = querySnapshot.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id,
     }));
+  
+    // If a date is provided, filter the tasks
+    if (date) {
+      return tasks.filter(task =>
+        task.dates.some(dateObj => dateObj.date === date)
+      );
+    }
+  
+    return tasks; // Return all tasks if no date is provided
   };
+  
 
   // Use the selected date from the query params to fetch tasks
   const {
@@ -55,7 +66,7 @@ function Tracker() {
         selectedDate ? selectedDate.toISOString().split("T")[0] : null
       ),
   });
-  const fetchAllTasksaaa = async (date) => {
+  const fetchAllTasksaaa = async () => {
     const tasksRef = collection(db, "allTasks");
     const q = tasksRef;
 
@@ -66,13 +77,15 @@ function Tracker() {
     }));
   };
   const { data: allTasksWithoutFilter } = useQuery({
-    queryKey: ["all-dtasks"],
+    queryKey: ["all-task-with-filter"],
     queryFn: fetchAllTasksaaa,
   });
   // Update task completion status in Firestore
   const updateTaskStatus = async ({ id, completed }) => {
     const taskRef = doc(db, "allTasks", id);
-    await updateDoc(taskRef, { completed });
+    const taskSnapshot = await getDoc(taskRef);
+    const prevDates = taskSnapshot.data().dates || [];
+    await updateDoc(taskRef, { dates:[...prevDates,{date:selectedDate.toISOString().split("T")[0], completed }]});
   };
 
   const mutation = useMutation({
@@ -97,13 +110,14 @@ function Tracker() {
     } else {
       await addDoc(tasksRef, {
         task: newTask,
-        completed: false,
-        dates: [currentDate.toISOString().split("T")[0]],
+        completed: [],
+        dates: [{date:selectedDate.toISOString().split("T")[0], completed:false}],
       });
     }
 
     setNewTask("");
     queryClient.invalidateQueries({ queryKey: ["all-tasks"] });
+    queryClient.invalidateQueries({ queryKey: ["all-task-with-filter"] });
   };
 
   const handleTaskClick = (task) => {
@@ -148,15 +162,19 @@ function Tracker() {
   }
   const updateTaskDates = async (task) => {
     const taskRef = doc(db, "allTasks", task.id);
-    console.log(
-      task.dates.includes(selectedDate.toISOString().split("T")[0]),
-      "ds"
-    );
-    if(!task.dates?.includes(selectedDate.toISOString().split("T")[0])){
+    const formattedDate = selectedDate.toISOString().split("T")[0];
+  
+    // Check if the date object with the same date already exists
+    const dateExists = task.dates?.some(dateObj => dateObj.date === formattedDate);
+  
+  
+    if (!dateExists) {
       console.log("Updating task", task.task);
       await updateDoc(taskRef, {
-        dates: [...task.dates, selectedDate.toISOString().split("T")[0]],
+        dates: [...task.dates, { date: formattedDate, completed: false }],
       });
+    } else {
+      console.log("Date already exists, not updating task", task.task);
     }
   };
   const { mutate } = useMutation({
@@ -177,9 +195,9 @@ function Tracker() {
       JSON.stringify(unfilteredTasksStringified)
     ) {
       const missingDates = allTasksWithoutFilter
-        .filter((task) => !allTasks?.some((t) => t.task === task.task))
+        ?.filter((task) => !allTasks?.some((t) => t.task === task.task))
         .map((task) => task);
-      console.log(missingDates);
+        console.log(missingDates)
       missingDates.forEach((date) => {
         mutate(date);
       });
@@ -250,7 +268,7 @@ function Tracker() {
       )}
 
       <h2>Track Your Progress</h2>
-
+{console.log(allTasks)}
       <div className="container-tracker">
         {allTasks?.map((task) => (
           <div

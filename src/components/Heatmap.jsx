@@ -5,6 +5,11 @@ import "react-calendar-heatmap/dist/styles.css";
 const today = new Date();
 
 const Heatmap = ({ data }) => {
+  console.log(data,'data')
+  function filterDate(data){
+
+    return data?.dates?.map((i)=>{return {date:i, count: 2}})
+}
   return (
     <div>
       <h2>Your Contributions</h2>
@@ -16,7 +21,7 @@ const Heatmap = ({ data }) => {
           if (!value) {
             return "color-empty";
           }
-          return `color-github-${value.count}`;
+          return `color-github-2`;
         }}
         tooltipDataAttrs={(value) => {
           if (!value || !value.date) {
