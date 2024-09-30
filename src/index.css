@@ -100,3 +100,42 @@ section {
 .color-github-4 {
   fill: #196127;
 }
+
+.calendar {
+  width: 300px;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.calendar-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-days,
+.calendar-dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-day,
+.calendar-day-name {
+  text-align: center;
+  padding: 5px;
+}
+
+.calendar-day-selectable {
+  cursor: pointer;
+}
+
+.selected {
+  background-color: #4caf50;
+  color: white;
+}
+

@@ -11,7 +11,7 @@ const router = createBrowserRouter([
       // administrative
       { path: "", element: <Tracker /> },
       { path: "contributions", element: <Contributions /> },
-  
+
     ],
   },
 ]);
