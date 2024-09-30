@@ -5,30 +5,26 @@ import "react-calendar-heatmap/dist/styles.css";
 const today = new Date();
 
 const Heatmap = ({ data }) => {
-  console.log(data,'data')
-  function filterDate(data){
-
-    return data?.dates?.map((i)=>{return {date:i, count: 2}})
-}
+  console.log(data)
   return (
     <div>
       <h2>Your Contributions</h2>
       <CalendarHeatmap
         startDate={new Date(today.getFullYear(), today.getMonth() - 11, 1)}
         endDate={today}
-        values={data}
+        values={data} // Pass the correctly formatted data here
         classForValue={(value) => {
           if (!value) {
             return "color-empty";
           }
-          return `color-github-2`;
+          return `color-github-2`; // Adjust class as needed
         }}
         tooltipDataAttrs={(value) => {
           if (!value || !value.date) {
             return { "data-tip": "No contributions" };
           }
           return {
-            "data-tip": `${value.date}: ${value.count} contributions`,
+            "data-tip": `${value.date}: ${value.count} contributions`, // Display date and count
           };
         }}
         showWeekdayLabels={true}
@@ -37,5 +33,6 @@ const Heatmap = ({ data }) => {
     </div>
   );
 };
+
 
 export default Heatmap;

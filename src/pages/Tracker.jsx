@@ -291,7 +291,7 @@ function Tracker() {
             key={task.id}
           >
              {task?.dates?.map((item,index)=>(
-item?.date === selectedDate.toISOString().split("T")[0] &&
+item?.date === selectedDate?.toISOString().split("T")[0] &&
               <Checkbox
               key={index}
               completed={item.completed}
