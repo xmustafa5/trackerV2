@@ -67,10 +67,8 @@ const Contributions = () => {
     <section>
       <h2>Filter by Activity</h2>
     {Tasks?.map((task,index)=>(
-
       <button key={index} onClick={() => setFilter(task?.task)}>{task?.task}</button>
     ))}
-
       {/* Pass the data to the Heatmap component */}
       <Heatmap data={data || []} />
     </section>

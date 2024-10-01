@@ -139,3 +139,20 @@ section {
   color: white;
 }
 
+@keyframes move-animation {
+  0% {
+    transform: translate(-80%, -50%) rotate(0deg);
+  }
+  25% {
+    transform: translate(-60%, 60%) rotate(15deg); /* Adjust degrees as needed */
+  }
+  50% {
+    transform: translate(-50%, 50%) rotate(30deg);
+  }
+  75% {
+    transform: translate(-20%, 20%) rotate(45deg);
+  }
+  100% {
+    transform: translate(0%, 0%) rotate(60deg); /* Final rotation */
+  }
+}
