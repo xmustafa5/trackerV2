@@ -53,7 +53,7 @@ function HeatMap({ data }) {
       rect.style.transform = ""; // Reset the rects when the mouse moves out
     });
   };
-  
+
   useEffect(() => {
     const animateRects = async () => {
       const rects = document.querySelectorAll("rect");
@@ -68,22 +68,22 @@ function HeatMap({ data }) {
         rect.style.backgroundColor = "#6c6c6c";
         rect.style.borderRadius = "10px"; // Works for HTML elements like divs
         rect.style.transition = "transform 0.5s ease";
-        rect.setAttribute("data-tooltip-id", "heatmap");
-
+        
         // Initial random animation (translate and rotate)
         if (index % 2 === 0) {
           rect.style.transform = `translate(-80%,-73%) rotate(${
             Math.random() * 360
-            }deg)`;
-          } else {
+          }deg)`;
+        } else {
           rect.style.transform = `translate(120%, 80%) rotate(${
             Math.random() * 360
           }deg)`;
         }
       });
-      
+
       // Wait for all animations to complete (delay)
-   
+      await sleep(3000); // Adjust sleep time for the length of the animation
+
       // Reset transformations after the animation completes
       rects.forEach((rect, index) => {
         setTimeout(() => {
@@ -91,25 +91,15 @@ function HeatMap({ data }) {
         }, index * 10); // Stagger the reset for smoother effect
       });
     };
-   
+
     // Trigger the animation
     animateRects();
   }, []);
 
   useEffect(() => {
-    const initializeMouseHandlers = async () => {
-      // Wait for 3 seconds before adding the mouse event listeners
-      await sleep(3000);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseout", handleMouseOut);
 
-      // Add event listeners
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseout", handleMouseOut);
-    };
-
-    // Call the async function to handle sleep
-    initializeMouseHandlers();
-
-    // Clean up the event listeners on unmount
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseout", handleMouseOut);

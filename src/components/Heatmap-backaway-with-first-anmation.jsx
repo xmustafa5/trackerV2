@@ -68,8 +68,7 @@ function HeatMap({ data }) {
         rect.style.backgroundColor = "#6c6c6c";
         rect.style.borderRadius = "10px"; // Works for HTML elements like divs
         rect.style.transition = "transform 0.5s ease";
-        rect.setAttribute("data-tooltip-id", "heatmap");
-
+        
         // Initial random animation (translate and rotate)
         if (index % 2 === 0) {
           rect.style.transform = `translate(-80%,-73%) rotate(${
@@ -83,7 +82,7 @@ function HeatMap({ data }) {
       });
       
       // Wait for all animations to complete (delay)
-   
+      
       // Reset transformations after the animation completes
       rects.forEach((rect, index) => {
         setTimeout(() => {
@@ -91,7 +90,7 @@ function HeatMap({ data }) {
         }, index * 10); // Stagger the reset for smoother effect
       });
     };
-   
+    
     // Trigger the animation
     animateRects();
   }, []);
