@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  /* background-color: #070707; */
 }
 .layout{
   display: flex;
@@ -100,7 +101,6 @@ section {
 .color-github-4 {
   fill: #196127;
 }
-
 .calendar {
   width: 300px;
   border: 1px solid #ccc;
@@ -155,4 +155,16 @@ section {
   100% {
     transform: translate(0%, 0%) rotate(60deg); /* Final rotation */
   }
+}
+
+.image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.split-image {
+  position: absolute;
+  transition: transform 0.3s ease;
+  will-change: transform;
+  cursor: pointer;
 }

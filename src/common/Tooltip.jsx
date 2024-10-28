@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import './Tooltip.css'; // Include your custom CSS styles
+import './tooltip.css'; // Include your custom CSS styles
 
 function Tooltip() {
   const [tooltipContent, setTooltipContent] = useState('');
